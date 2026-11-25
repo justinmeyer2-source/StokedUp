@@ -16,7 +16,7 @@ public partial class MainPage : ContentPage
 
         try
         {
-            await LocalDatabase.CheckAsync();
+            await TestDatabase.CheckAsync();
             DatabaseStatus.Text = "SQLite is ready.";
         }
         catch (Exception exception)
