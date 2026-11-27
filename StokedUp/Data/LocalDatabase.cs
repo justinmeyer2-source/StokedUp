@@ -1,19 +1,16 @@
 ﻿using Android.Net;
 using Android.Webkit;
 using SQLite;
+using AppConstants = StokedUp.Constants.Constants;
 using StokedUp.Models;
 
 namespace StokedUp.Data
 {
-    internal static class LocalDatabase
+    public class LocalDatabase
     {
-        private static readonly SQLiteAsyncConnection Database =
-            new SQLiteAsyncConnection(Path.Combine
-                (FileSystem.AppDataDirectory, "stokedup.db3"));
+        private SQLiteAsyncConnection? _database;
 
-        private static readonly SemaphoreSlim InitializationLock = new(1, 1);
-
-        private static bool initialized;
+        private readonly SemaphoreSlim _initializationLock = new(1, 1);
 
         private static readonly string[] AvailableCategories =
         {
@@ -22,45 +19,50 @@ namespace StokedUp.Data
             "Meat",
             "Canned",
             "Frozen",
-            "Drinks",
-            "Grains",
+            "Drink",
+            "Grain",
             "Sweets",
-            "Oils",
-            "Nuts",
-            "Condiments",
+            "Oil",
+            "Nut",
+            "Condiment",
             "Miscellaneous"
         };
 
         //initialize database and create tables
-        internal static async Task InitializeAsync()
+        private async Task InitializeAsync()
         {
-            if (initialized)
+            if (_database != null)
                 return;
 
-            await InitializationLock.WaitAsync();
+            await _initializationLock.WaitAsync();
 
             try
             {
-                if (initialized)
+                if (_database != null)
                     return;
 
-                await Database.CreateTableAsync<StokpileItem>();
-                await Database.CreateTableAsync<Category>();
-                await AddAvailableCategoriesAsync();
+                //create SQLite connection
+                var connection = new SQLiteAsyncConnection(
+                    AppConstants.DatabasePath,
+                    AppConstants.Flags);
 
-                initialized = true;
+                await connection.CreateTableAsync<StokpileItem>();
+                await connection.CreateTableAsync<Category>();
+                await AddAvailableCategoriesAsync(connection);
+
+                _database = connection;
             }
             finally
             {  
-                InitializationLock.Release(); 
+                _initializationLock.Release(); 
             }
         }
 
         //add available categories if they do not already exist
-        private static async Task AddAvailableCategoriesAsync()
+        private static async Task AddAvailableCategoriesAsync(SQLiteAsyncConnection connection)
         {
             var existingCategories =
-                await Database.Table<Category>().ToListAsync();
+                await connection.Table<Category>().ToListAsync();
 
             foreach (string categoryType in AvailableCategories)
             {
@@ -69,41 +71,41 @@ namespace StokedUp.Data
 
                 if (!categoryExists)
                 {
-                    await Database.InsertAsync(
+                    await connection.InsertAsync(
                         new Category {CategoryType = categoryType});
                 }
             }
         }
 
         //retrieve available categories
-        internal static async Task<List<Category>>GetCategoriesAsync()
+        public async Task<List<Category>>GetCategoriesAsync()
         {
             await InitializeAsync();
 
-            return await Database.Table<Category>()
+            return await _database!.Table<Category>()
+                .ToListAsync();
+        }
+
+        //retrieve all grocery items from Stokpile
+        public async Task<List<StokpileItem>> GetStokpileItemsAsync()
+        {
+            await InitializeAsync();
+            return await _database!.Table<StokpileItem>()
                 .ToListAsync();
         }
 
         //US-01: Add Grocery Items to Stokpile
-        internal static async Task AddStokpileItemAsync(StokpileItem item)
+        public async Task AddStokpileItemAsync(StokpileItem item)
         {
             await InitializeAsync();
-            await Database.InsertAsync(item);
-        }
-
-        //Retrieve all grocery items from Stokpile
-        internal static async Task<List<StokpileItem>>GetStokpileItemsAsync()
-        {
-            await InitializeAsync();
-            return await Database.Table<StokpileItem>()
-                .ToListAsync();
+            await _database!.InsertAsync(item);
         }
 
         //US-03: Delete Grocery Items from Stokpile
-        internal static async Task DeleteStokpileItemAsync(int id)
+        public async Task DeleteStokpileItemAsync(int id)
         {
             await InitializeAsync();
-            await Database.DeleteAsync<StokpileItem> (id);
+            await _database!.DeleteAsync<StokpileItem> (id);
         }
     }
 }
