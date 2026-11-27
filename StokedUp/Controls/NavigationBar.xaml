@@ -1,0 +1,110 @@
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="StokedUp.Controls.NavigationBar"
+             x:Name="Root">
+
+    <!--NAVIGATION BAR-->
+    <Grid ColumnDefinitions="*,*,*,*"
+      Padding="{OnIdiom Phone='4,8,4,12', Tablet='8,10,8,16'}"
+      BackgroundColor="White"
+      HeightRequest="{OnIdiom Phone=68, Tablet=80}">
+
+        <!--Stokpile-->
+        <Border x:Name="BtnStokpile"
+            Grid.Column="0"
+            Stroke="Black"
+            StrokeThickness="1.5"
+            Padding="2"
+            StrokeShape="RoundRectangle 8"
+            HorizontalOptions="Fill"
+            Margin="{OnIdiom Phone='3,0', Tablet='6,0'}"
+            HeightRequest="{OnIdiom Phone=48, Tablet=56}"
+            BackgroundColor="Transparent">
+            <Border.GestureRecognizers>
+                <TapGestureRecognizer 
+                    Command="{Binding Source={x:Reference Root}, Path=NavigateCommand}"
+                    CommandParameter="Stokpile"/>
+            </Border.GestureRecognizers>
+            <Label x:Name="LblStokpile"
+                   Text="Stokpile"
+                   FontSize="{OnIdiom Phone=13, Tablet=15}"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"
+                   HorizontalTextAlignment="Center"/>
+        </Border>
+
+        <!--Shopping List-->
+        <Border x:Name="BtnShopping"
+            Grid.Column="1"
+            Stroke="Black"
+            StrokeThickness="1.5"
+            Padding="2"
+            StrokeShape="RoundRectangle 8"
+            HorizontalOptions="Fill"
+            Margin="{OnIdiom Phone='3,0', Tablet='6,0'}"
+            HeightRequest="{OnIdiom Phone=48, Tablet=56}"
+            BackgroundColor="Transparent">
+            <Border.GestureRecognizers>
+                <TapGestureRecognizer 
+                    Command="{Binding Source={x:Reference Root}, Path=NavigateCommand}"
+                    CommandParameter="ShoppingList"/>
+            </Border.GestureRecognizers>
+            <Label x:Name="LblShoppingList"
+                   Text="Shopping&#x0a;List"
+                   FontSize="{OnIdiom Phone=13, Tablet=15}"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"
+                   HorizontalTextAlignment="Center"
+                   LineBreakMode="WordWrap"/>
+        </Border>
+
+        <!--Expiration Alerts-->
+        <Border x:Name="BtnExpirationAlerts"
+            Grid.Column="2"
+            Stroke="Black"
+            StrokeThickness="1.5"
+            Padding="2"
+            StrokeShape="RoundRectangle 8"
+            HorizontalOptions="Fill"
+            Margin="{OnIdiom Phone='3,0', Tablet='6,0'}"
+            HeightRequest="{OnIdiom Phone=48, Tablet=56}"
+            BackgroundColor="Transparent">
+            <Border.GestureRecognizers>
+                <TapGestureRecognizer 
+                    Command="{Binding Source={x:Reference Root}, Path=NavigateCommand}"
+                    CommandParameter="ExpirationAlerts"/>
+            </Border.GestureRecognizers>
+            <Label x:Name="LblExpirationAlerts"
+                   Text="Expiration&#x0a;Alerts"
+                   FontSize="{OnIdiom Phone=13, Tablet=15}"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"
+                   HorizontalTextAlignment="Center"
+                   LineBreakMode="WordWrap"/>
+        </Border>
+
+        <!--Settings-->
+        <Border x:Name="BtnSettings"
+            Grid.Column="3"
+            Stroke="Black"
+            StrokeThickness="1.5"
+            Padding="2"
+            StrokeShape="RoundRectangle 8"
+            HorizontalOptions="Fill"
+            Margin="{OnIdiom Phone='3,0', Tablet='6,0'}"
+            HeightRequest="{OnIdiom Phone=48, Tablet=56}"
+            BackgroundColor="Transparent">
+            <Border.GestureRecognizers>
+                <TapGestureRecognizer 
+                    Command="{Binding Source={x:Reference Root}, Path=NavigateCommand}"
+                    CommandParameter="Settings"/>
+            </Border.GestureRecognizers>
+            <Label x:Name="LblSettings"
+                   Text="Settings"
+                   FontSize="{OnIdiom Phone=13, Tablet=15}"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"
+                   HorizontalTextAlignment="Center"/>
+        </Border>
+    </Grid>
+</ContentView>
