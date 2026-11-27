@@ -10,7 +10,7 @@ using System.Text;
 
 namespace StokedUp.ViewModels
 {
-    internal class AddStokpileItemViewModel : INotifyPropertyChanged
+    public class AddStokpileItemViewModel : INotifyPropertyChanged
     {
         private readonly LocalDatabase _database;
 
