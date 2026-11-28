@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:StokedUp.Controls"
+             xmlns:models="clr-namespace:StokedUp.Models"
+             x:Class="StokedUp.Views.StokpilePage"
+             Title="Stokpile"
+             BackgroundColor="White"
+             Shell.NavBarIsVisible="False">
+
+    <Grid RowDefinitions="Auto,Auto,Auto,*,Auto"
+          Padding="0"
+          RowSpacing="0">
+
+        <!--HEADER-->
+        <Grid Grid.Row="0"
+              Padding="{OnIdiom Phone='12,8', Tablet='20,12'}"
+              ColumnDefinitions="Auto,*,Auto"
+              ColumnSpacing="{OnIdiom Phone=8, Tablet=16}"
+              VerticalOptions="Center">
+
+            <!--Logo-->
+            <Image Source="stoked_up_logo.png"
+                   HeightRequest="{OnIdiom Phone=68, Tablet=96}"
+                   WidthRequest="{OnIdiom Phone=68, Tablet=96}"
+                   Aspect="AspectFit"
+                   VerticalOptions="Center"
+                   HorizontalOptions="Start"/>
+
+            <!--Page Title-->
+            <Label Grid.Column="1"
+                   Text="Stokpile"
+                   FontSize="{OnIdiom Phone=26, Tablet=34}"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"
+                   LineBreakMode="NoWrap"
+                   MaxLines="1"/>
+
+            <!--Search bar-->
+            <SearchBar Grid.Column="2"
+                       x:Name="SearchBar"
+                       Placeholder="Search..."
+                       WidthRequest="140"
+                       MinimumWidthRequest="{OnIdiom Phone=110, Tablet=180}"
+                       MaximumWidthRequest="{OnIdiom Phone=160, Tablet=280}"
+                       HeightRequest="{OnIdiom Phone=40, Tablet=46}"
+                       FontSize="{OnIdiom Phone=14, Tablet=16}"
+                       BackgroundColor="Transparent"
+                       HorizontalOptions="End"
+                       VerticalOptions="Center"
+                       SearchCommand="{Binding SearchCommand}"
+                       Text="{Binding SearchText, Mode=TwoWay}"/>
+        </Grid>
+
+        <!--Separator-->
+        <BoxView Grid.Row="1"
+                 HeightRequest="1.5"
+                 Color="Black"
+                 HorizontalOptions="Fill"/>
+
+        <!--CATEGORY FILTERS--> <!--////CATEGORY FILTERS AND SORT NEEDS BINDING////-->
+        <ScrollView Grid.Row="2"
+            Orientation="Horizontal"
+            HorizontalScrollBarVisibility="Never"
+            Padding="12,10">
+            <HorizontalStackLayout Spacing="8">
+                <Border StrokeShape="RoundRectangle 6"
+                Stroke="#CCCCCC"
+                StrokeThickness="1"
+                BackgroundColor="Transparent"
+                Padding="14,6"
+                VerticalOptions="Center">
+                    <Picker ItemsSource="{Binding SortOptions}"
+                    SelectedItem="{Binding SelectedSortOption}"
+                    TextColor="Black"
+                    FontSize="13"
+                    VerticalOptions="Center"/>
+                </Border>
+
+                <HorizontalStackLayout BindableLayout.ItemsSource="{Binding Categories}"
+                           Spacing="8">
+
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="models:CategoryFilter">
+                            <Border Padding="14,6"
+                    StrokeShape="RoundRectangle 6"
+                    StrokeThickness="1"
+                    VerticalOptions="Center">
+
+                                <!---Styling for Selected States-->
+                                <Border.Triggers>
+                                    <DataTrigger TargetType="Border"
+                                 Binding="{Binding IsSelected}"
+                                 Value="True">
+                                        <Setter Property="BackgroundColor" Value="LightGray"/>
+                                        <Setter Property="Stroke" Value="Black"/>
+                                    </DataTrigger>
+                                    <DataTrigger TargetType="Border" 
+                                 Binding="{Binding IsSelected}" 
+                                 Value="False">
+                                        <Setter Property="BackgroundColor" 
+                                Value="Transparent" />
+                                        <Setter Property="Stroke" Value="Black"/>
+                                    </DataTrigger>
+                                </Border.Triggers>
+
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer 
+                        Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}},
+                                  Path=BindingContext.ToggleCategoryCommand}"
+                                  CommandParameter="{Binding .}" />
+                                </Border.GestureRecognizers>
+
+                                <Label Text="{Binding Name}" 
+                       FontSize="13"
+                       VerticalOptions="Center"
+                       HorizontalOptions="Center">
+                                    <Label.Triggers>
+                                        <DataTrigger TargetType="Label" 
+                                     Binding="{Binding IsSelected}" 
+                                     Value="True">
+                                            <Setter Property="TextColor" Value="Black" />
+                                            <Setter Property="FontAttributes" Value="Bold"/>
+                                        </DataTrigger>
+                                    </Label.Triggers>
+                                </Label>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </HorizontalStackLayout>
+            </HorizontalStackLayout>
+        </ScrollView>
+
+
+
+        <!--STOKPILE LIST-->
+        <CollectionView Grid.Row="3"
+                        x:Name="StokpileItems"
+                        Margin="12,4,12,8"
+                        SelectionMode="None"
+                        VerticalOptions="Fill"
+                        ItemsSource="{Binding Items}">
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout Orientation="Vertical" ItemSpacing="10"/>
+            </CollectionView.ItemsLayout>
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:StokpileItem">
+                    <Border Stroke="Black"
+                            StrokeThickness="1.5"
+                            BackgroundColor="White"
+                            Padding="14,12"
+                            StrokeShape="RoundRectangle 6"
+                            Margin="0,0,0,2">
+                        <VerticalStackLayout Spacing="6">
+
+                            <!--Item row-->
+                            <Grid ColumnDefinitions="*,Auto">
+
+                                <!--Left side: Name, Category, Expiration-->
+                                <VerticalStackLayout Spacing="2" VerticalOptions="Center">
+                                    <Label Text="{Binding Name}"
+                                        FontSize="18"
+                                        FontAttributes="Bold"
+                                        LineBreakMode="TailTruncation"/>
+                                    <Label Text="{Binding Category}"
+                                        FontSize="14"
+                                        TextColor="#444"/>
+                                    <Label Text="{Binding ExpirationDate, StringFormat='Expires: {0:MMM dd, yyyy}'}"
+                                        FontSize="13"
+                                        TextColor="#666"/>
+                                </VerticalStackLayout>
+
+                                <!--Right side: Quantity, notes dropdown, ellipsis hover menu-->
+                                <VerticalStackLayout Grid.Column="1"
+                                         Spacing="8"
+                                         HorizontalOptions="End"
+                                         VerticalOptions="Center">
+
+                                    <!--Quantity / unit-->
+                                    <HorizontalStackLayout Spacing="4" HorizontalOptions="End">
+                                        <Label Text="{Binding Quantity}" FontSize="14" VerticalOptions="Center"/>
+                                        <Label Text="{Binding Unit}" FontSize="14" VerticalOptions="Center"/>
+                                    </HorizontalStackLayout>
+
+                                    <!--Notes arrow + ellipsis-->
+                                    <HorizontalStackLayout Spacing="10" HorizontalOptions="End">
+
+                                        <!--Notes expand/collapse-->
+                                        <Border Stroke="Black"
+                                    StrokeThickness="1"
+                                    Padding="8,4"
+                                    StrokeShape="RoundRectangle 4"
+                                    BackgroundColor="Transparent">
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer 
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}},
+                                                          Path=BindingContext.ToggleNotesCommand}"
+                                                          CommandParameter="{Binding .}"/>
+                                            </Border.GestureRecognizers>
+                                            <HorizontalStackLayout Spacing="4">
+                                                <Label Text="Notes" FontSize="12" VerticalOptions="Center"/>
+                                                <Label Text="{Binding IsNotesExpanded, StringFormat='{0:▼;▲;▼}'}"
+                                                       FontSize="11"/>
+                                            </HorizontalStackLayout>
+                                        </Border>
+
+                                        <!--Ellipsis with edit/delete menu-->
+                                        <Label Text="•••"
+                                   FontSize="18"
+                                   FontAttributes="Bold"
+                                   VerticalOptions="Center"
+                                   Padding="6,0">
+                                            <FlyoutBase.ContextFlyout>
+                                                <MenuFlyout>
+                                                    <MenuFlyoutItem Text="Edit"
+                                                 Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}},
+                                                                   Path=BindingContext.EditItemCommand}"
+                                                                   CommandParameter="{Binding .}"/>
+                                                    <MenuFlyoutItem Text="Delete"
+                                                 Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}},
+                                                                   Path=BindingContext.DeleteItemCommand}"
+                                                                   CommandParameter="{Binding .}"/>
+                                                </MenuFlyout>
+                                            </FlyoutBase.ContextFlyout>
+                                        </Label>
+
+                                    </HorizontalStackLayout>
+                                </VerticalStackLayout>
+                            </Grid>
+
+                            <!--Expandable Notes-->
+                            <Border IsVisible="{Binding IsNotesExpanded}"
+                                Stroke="Transparent"
+                                BackgroundColor="#F8F8F8"
+                                Padding="10,8"
+                                StrokeShape="RoundRectangle 4"
+                                Margin="0,4,0,0">
+                                <Label Text="{Binding Notes, TargetNullValue='No notes'}"
+                                FontSize="13"
+                                TextColor="#333"
+                                LineBreakMode="WordWrap"/>
+                            </Border>
+                        </VerticalStackLayout>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <!--Floating Add Stokpile Item button-->
+        <AbsoluteLayout Grid.Row="3"
+                        InputTransparent="True"
+                        Margin="{OnIdiom Phone='0,0,16,20', Tablet='0,0,24,28'}">
+            <Border AbsoluteLayout.LayoutBounds="1,1,60,60"
+                    AbsoluteLayout.LayoutFlags="PositionProportional"
+                    Stroke="Black"
+                    StrokeThickness="2"
+                    BackgroundColor="White"
+                    StrokeShape="RoundRectangle 30"
+                    InputTransparent="False"
+                    WidthRequest="{OnIdiom Phone=56, Tablet=68}"
+                    HeightRequest="{OnIdiom Phone=56, Tablet=68}">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding AddStokpileItemCommand}"/>
+                </Border.GestureRecognizers>
+                <Label Text="＋"
+                       FontSize="{OnIdiom Phone=28, Tablet=34}"
+                       FontAttributes="Bold"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"
+                       InputTransparent="True"/>
+            </Border>
+        </AbsoluteLayout>
+
+        <!--Bottom Nav Bar-->
+        <controls:NavigationBar Grid.Row="4"
+                       SelectedTab="Stokpile"
+                       NavigateCommand="{Binding NavigateCommand}"/>
+    </Grid>
+</ContentPage>
