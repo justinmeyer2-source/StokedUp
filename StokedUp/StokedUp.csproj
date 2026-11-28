@@ -18,4 +18,7 @@
     <PackageReference Include="sqlite-net-pcl" Version="1.11.285" />
     <PackageReference Include="SQLitePCLRaw.lib.e_sqlite3.android" Version="2.1.14" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Views\" />
+  </ItemGroup>
 </Project>
