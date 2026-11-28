@@ -1,17 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
+﻿using SQLite;
 
-namespace StokedUp.Models;
+namespace StokedUp.Models
+{
+    [Table("StokpileItems")]
     public class StokpileItem
     {
+        [PrimaryKey, AutoIncrement]
+        public int Id { get; set; }
+
+        [NotNull]
         public string Name { get; set; } = string.Empty;
-        public string Category { get; set; } = string.Empty;
-        public DateTime ExpirationDate { get; set; }
-        public string Quantity { get; set; } = string.Empty;
+
+        [NotNull]
+        public double Quantity { get; set; }
+
         public string Unit { get; set; } = string.Empty;
+
+        [NotNull]
+        public string Category {  get; set; } = string.Empty;
+
+        public DateTime ExpirationDate { get; set; }
+
         public string Notes { get; set; } = string.Empty;
-        public bool IsNotesExpanded { get; set; }
     }
+}
