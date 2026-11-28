@@ -18,6 +18,7 @@ public static class MauiProgram
         //register ViewModels
         builder.Services.AddTransient<StokpileViewModel>();
         builder.Services.AddTransient<AddStokpileItemViewModel>();
+        builder.Services.AddTransient<StokpilePageViewModel>();
         // builder.Services.AddTransient<EditStokpileItemViewModel>();
 
         //register Views
